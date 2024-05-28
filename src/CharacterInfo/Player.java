@@ -33,4 +33,16 @@ public class Player extends Characters implements CombatInterface{
         this.setAttackDamage(this.getAttackDamage()+5);
         this.setCurHealth(this.getMaxHealth());
     }
+    public void equipItem(Equippable item){
+        item.handleEquip(this);
+    }
+    public void equipItem(Equippable firstItem, Equippable secondItem){
+        firstItem.handleEquip(this);
+        secondItem.handleEquip(this);
+    }
+    @Override
+    public void attack(Characters c) {
+        if (this.getStatus()) {
+            this.dealDamage(c,this.getAttackDamage());
+        }
 }
