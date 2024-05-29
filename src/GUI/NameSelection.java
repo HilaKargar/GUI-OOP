@@ -5,8 +5,9 @@ import CharacterInfo.Player;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class NameSelection {
+public class NameSelection  implements ActionListener {
     private TextAdventure game;
     private JTextField nameSelection;
     private JFrame nameFrame;
