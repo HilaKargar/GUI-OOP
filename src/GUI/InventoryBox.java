@@ -1,6 +1,7 @@
 package GUI;
 
 import CharacterInfo.Player;
+import Items.*;
 
 import javax.swing.*;
 import java.awt.*;

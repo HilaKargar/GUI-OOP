@@ -2,6 +2,8 @@ package Event;
 
 import CharacterInfo.*;
 import GUI.TextAdventure;
+import GUI.CharacterLabel;
+import Game.EnemyGenerator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,10 +11,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Fight extends JFrame implements ActionListener,EventInterface {
-    public Fight (Player p, Enemy e){
+    private final Player player1;
+    private final Enemy enemy;
+    private JFrame fFrame;
+    private JPanel fPanel;
+    private JButton attButton,runButton;
+    private JTextArea combatText;
+    private CharacterLabel characterInfoLabel;
+
+    public Fight(Player p, Enemy e) {
         this.player1 = p;
         this.enemy = e;
-
 
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -40,35 +49,10 @@ public class Fight extends JFrame implements ActionListener,EventInterface {
         characterInfoLabel = new CharacterLabel(this.player1,this.enemy);
         this.add(characterInfoLabel, BorderLayout.NORTH);
         setLocationRelativeTo(null);
-    }
-    private final Player player1;
-    private final Enemy enemy;
-    private JFrame fFrame;
-    private JPanel fPanel;
-    private JButton attButton,runButton;
-    private JTextArea combatText;
-    private CharacterLabel characterInfoLabel;
-    public void displayMessage(String message){
-        this.combatText.append("\n"+message);
-        this.combatText.setCaretPosition(this.combatText.getDocument().getLength());
-    }
 
-
-    public static void trigger(TextAdventure game) {
-        game.removePanel(game.getExplorePanel());
-        game.addPanel(game.getEventPanel());
-        game.displayMessage("you found an enemy!");
-        Enemy e = EnemyGenerator.generateEnemy(game.getPlayer(),game);
-        game.setEvent(new Fight(game.getPlayer(),e));
-    }
-    @Override
-    public void start(Player p){
-
-        this.setVisible(true);
 
 
     }
-
     @Override
     public void actionPerformed(ActionEvent e){
         if (e.getSource()==attButton){
@@ -101,6 +85,26 @@ public class Fight extends JFrame implements ActionListener,EventInterface {
             }
 
         }
+
+    }
+    public void displayMessage(String message){
+        this.combatText.append("\n"+message);
+        this.combatText.setCaretPosition(this.combatText.getDocument().getLength());
+    }
+
+
+    public static void trigger(TextAdventure game) {
+        game.removePanel(game.getExplorePanel());
+        game.addPanel(game.getEventPanel());
+        game.displayMessage("you found an enemy!");
+        Enemy e = EnemyGenerator.generateEnemy(game.getPlayer(),game);
+        game.setEvent(new Fight(game.getPlayer(),e));
+    }
+    @Override
+    public void start(Player p){
+
+        this.setVisible(true);
+
 
     }
 }

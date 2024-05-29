@@ -3,6 +3,7 @@ package Event;
 import CharacterInfo.Enemy;
 import CharacterInfo.Player;
 import GUI.TextAdventure;
+import Game.EnemyGenerator;
 
 import java.util.LinkedList;
 import java.util.Queue;

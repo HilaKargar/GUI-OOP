@@ -2,8 +2,12 @@ package Event;
 
 import CharacterInfo.Player;
 import GUI.TextAdventure;
+import Items.Armor;
+import Items.Item;
+import Items.Weapon;
 
 import java.util.Random;
+
 
 public class Treasure implements EventInterface{
     public Treasure(TextAdventure game){

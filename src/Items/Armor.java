@@ -1,6 +1,7 @@
 package Items;
 
 import CharacterInfo.Player;
+import Game.HealthGenericClass;
 
 import java.util.Random;
 

@@ -1,6 +1,7 @@
 package Items;
 
-import CharacterInfo.*;
+import CharacterInfo.Player;
+import Game.DamageGenericClass;
 
 import java.util.Random;
 

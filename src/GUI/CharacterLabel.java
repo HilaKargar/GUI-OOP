@@ -1,11 +1,11 @@
 package GUI;
 
-
-import CharacterInfo.*;
+import CharacterInfo.Enemy;
+import CharacterInfo.Player;
 
 import javax.swing.*;
 
-public class CharacterLable extends JLabel {
+public class CharacterLabel extends JLabel {
     private Player player;
     private Enemy enemy;  // Add an Enemy reference
 

@@ -1,161 +1,99 @@
 package GUI;
 
 import CharacterInfo.Player;
+import Items.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class LevelUp {
-    private TextAdventure game;
-    private Map<JCheckBox, Equippable> checkboxToItemMap = new HashMap<>();
-    private JFrame inventoryFrame;
-    private JPanel mainPanel, buttonPanel, armorPanel, weaponPanel;
-    private JButton closeButton, applyButton;
-    private ArrayList<JCheckBox> armorCheckboxes;
-    private ArrayList<JCheckBox> weaponCheckboxes;
+    private final TextAdventure game;
+    private JFrame frame;
+    private JPanel mainPanel, bottomPanel;
+    private JRadioButton optionButton1, optionButton2;
+    private ButtonGroup group;
+    private JButton okButton;
+    private JTextArea textArea;
 
-    public InventoryBox(TextAdventure game) {
+    public LevelUp(TextAdventure game) {
         this.game = game;
-        inventoryFrame = new JFrame("Inventory");
-        inventoryFrame.setSize(300, 300);
-
-
-        mainPanel = new JPanel(new GridLayout(2, 1));
-        buttonPanel = new JPanel();
-        armorPanel = new JPanel(); // Panel for armors
-        weaponPanel = new JPanel(); // Panel for weapons
-
-        armorCheckboxes = new ArrayList<>();
-        weaponCheckboxes = new ArrayList<>();
-
-        applyButton = new JButton("Apply");
-        applyButton.addActionListener(this);
-        buttonPanel.add(applyButton);
-
-
-        mainPanel.add(armorPanel);
-        mainPanel.add(weaponPanel);
-        inventoryFrame.add(mainPanel, BorderLayout.CENTER);
-
-        closeButton = new JButton("Close");
-        closeButton.addActionListener(this);
-        buttonPanel.add(closeButton);
-        inventoryFrame.add(buttonPanel, BorderLayout.SOUTH);
-
-        inventoryFrame.setLocationRelativeTo(null);
-        inventoryFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        initializeComponents();
+        setUpFrame();
     }
 
-    private void addCheckbox(Item<?> item, JPanel panel, ArrayList<JCheckBox> checkboxList) {
-        JCheckBox checkBox = new JCheckBox(item.getName());
-        checkBox.addItemListener(this);
-        checkboxList.add(checkBox);
-        panel.add(checkBox);
-        checkboxToItemMap.put(checkBox, (Equippable) item);
-    }
-    public void handleNewItem(Item<?> item){
-        if (item.getAttribute().getClass().getName().equals("Game.HealthGenericClass")){
-            addCheckbox(item,this.armorPanel,this.armorCheckboxes);
-        }else {
-            addCheckbox(item,this.weaponPanel,this.weaponCheckboxes);
-        }
-        inventoryFrame.repaint();
-    }
+    private void initializeComponents() {
+
+        frame = new JFrame("Level Up");
+        mainPanel = new JPanel(new GridLayout(0, 1));
+        textArea = new JTextArea("Choose an attribute to level up:");
+        textArea.setEditable(false);
+        bottomPanel = new JPanel();
 
 
+        optionButton1 = new JRadioButton("Increase Health");
+        optionButton2 = new JRadioButton("Increase Attack");
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == closeButton) {
-            inventoryFrame.setVisible(false);
-        } else if (e.getSource() == applyButton) {
-            handleEquippingItems();
-        }
-    }
-    private void handleEquippingItems() {
-        ArrayList<Equippable> selectedItems = getSelectedItems();
-        Player player = game.getPlayer(); // Assuming this is how you get the player instance
 
-        if (selectedItems.size() == 1) {
-            player.equipItem(selectedItems.get(0));
-            removeItemFromInventory(selectedItems.get(0));
-        } else if (selectedItems.size() == 2) {
-            player.equipItem(selectedItems.get(0), selectedItems.get(1));
-            removeItemFromInventory(selectedItems.get(0));
-            removeItemFromInventory(selectedItems.get(1));
-        }
-    }
+        group = new ButtonGroup();
+        group.add(optionButton1);
+        group.add(optionButton2);
 
-    private ArrayList<Equippable> getSelectedItems() {
-        ArrayList<Equippable> selectedItems = new ArrayList<>();
-        for (JCheckBox checkBox : armorCheckboxes) {
-            if (checkBox.isSelected()) {
-                selectedItems.add(getItemFromCheckbox(checkBox, true));
+
+        mainPanel.add(textArea);
+        mainPanel.add(optionButton1);
+        mainPanel.add(optionButton2);
+
+
+        okButton = new JButton("Apply Level Up");
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                applyLevelUpChoice();
             }
-        }
-        for (JCheckBox checkBox : weaponCheckboxes) {
-            if (checkBox.isSelected()) {
-                selectedItems.add(getItemFromCheckbox(checkBox, false));
-            }
-        }
-        return selectedItems;
-    }
-    private Equippable getItemFromCheckbox(JCheckBox checkBox, boolean isArmor) {
-        // Return the item associated with the checkbox
-        return checkboxToItemMap.get(checkBox);
-    }
-    public void removeItemFromInventory(Equippable item) {
-        for (Map.Entry<JCheckBox, Equippable> entry : checkboxToItemMap.entrySet()) {
-            if (entry.getValue().equals(item)) {
-                JCheckBox checkBox = entry.getKey();
-                if (armorCheckboxes.contains(checkBox)) {
-                    armorPanel.remove(checkBox);
-                    armorCheckboxes.remove(checkBox);
-                } else if (weaponCheckboxes.contains(checkBox)) {
-                    weaponPanel.remove(checkBox);
-                    weaponCheckboxes.remove(checkBox);
-                }
-                checkboxToItemMap.remove(checkBox);
-                break;
-            }
-        }
-        inventoryFrame.repaint();
-        inventoryFrame.revalidate();
-    }
+        });
 
 
-
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-        JCheckBox source = (JCheckBox) e.getItemSelectable();
-        if (armorCheckboxes.contains(source)) {
-            updateCheckboxes(armorCheckboxes, source);
-        } else if (weaponCheckboxes.contains(source)) {
-            updateCheckboxes(weaponCheckboxes, source);
-        }
+        bottomPanel.add(okButton);
     }
 
-    private void updateCheckboxes(ArrayList<JCheckBox> checkboxes, JCheckBox source) {
-        if (source.isSelected()) {
-            for (JCheckBox checkBox : checkboxes) {
-                if (checkBox != source) {
-                    checkBox.setEnabled(false);
-                }
-            }
-        } else {
-            for (JCheckBox checkBox : checkboxes) {
-                checkBox.setEnabled(true);
-            }
-        }
+    private void setUpFrame() {
+
+        frame.add(mainPanel, BorderLayout.CENTER);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
+
+
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
-    public void turnOnVisibility() {
-        inventoryFrame.repaint();
-        inventoryFrame.setVisible(true);
+    private void applyLevelUpChoice() {
+
+        if (optionButton1.isSelected()) {
+            applyChangesForOption1();
+        } else if (optionButton2.isSelected()) {
+            applyChangesForOption2();
+        }
+
+        frame.dispose();
+    }
+
+    private void applyChangesForOption1() {
+
+        game.getPlayer().increaseHealth();
+        game.displayMessage("Health increased!");
+    }
+
+    private void applyChangesForOption2() {
+
+        game.getPlayer().increaseAttack();
+        game.displayMessage("Attack increased!");
     }
 }
