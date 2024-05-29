@@ -4,7 +4,7 @@ import CharacterInfo.Player;
 
 import java.util.Random;
 
-public class Armor {
+public class Armor extends Item<HealthGenericClass> implements Equippable {
     public Armor(String name,int health){
         super(name);
 
